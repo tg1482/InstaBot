@@ -1,5 +1,6 @@
 from instapy import InstaPy
 from instapy.util import smart_run
+import random
 
 # Write your automation here
 # Stuck? Look at the github page https://github.com/InstaPy/instapy-quickstart
@@ -61,17 +62,25 @@ GIFT_TAGS = ['giftsforher',
 
     
 ALL_TAGS = ENTREPRENEUR_TAGS + PRODUCT_TAGS + INDIAN_ETHNIC_TAGS + BLOCK_PRINTING_TAGS + GIFT_TAGS
+TOP_TAGS = random.sample(ALL_TAGS, 10)
 
 COMMENT_LIST = ['Beautiful :heart_eyes:',
                 'Absolutely stunning :heart_eyes: :heart:',
                 'Inspiring!']
+
+
+BUSINESS_CATEGORIES_TO_KEEP = ['Advertising Agency', 'Advertising/Marketing', 'Art', 'Art Gallery', 
+                                'Art Museum', 'Artist', 'Arts & Entertainment', 'Arts & Humanities Website', 'Clothing (Brand)',
+                                'Clothing Store', 'Content & Apps', 'Creators & Celebrities', 'Fashion Designer', 'Fashion Model',
+                                'Jewelry/Watches', 'Personal Blog', 'Photographer', 'Public Figure', 'Publishers']
+
 
 session = InstaPy(username=insta_username,
                     password=insta_password,
                     headless_browser=True,
                     disable_image_load=True,
                     multi_logs=False,
-                    # geckodriver_path="/assets/gecko/v0.29.1/geckodriver-v0.29.1-linux64.tar.gz",
+                    # geckodriver_path="./assets/gecko/v0.29.1/geckodriver-v0.29.1-linux64/geckodriver",
                     )
 
 
@@ -80,12 +89,13 @@ with smart_run(session):
     Session Quota
     """
     session.set_quota_supervisor(enabled=True,
-                                sleep_after=["likes", "follows"],
-                                sleepyhead=True, stochastic_flow=True,
+                                sleep_after=["likes", "follows", "server_calls"],
+                                sleepyhead=True,
+                                stochastic_flow=True,
                                 notify_me=True,
-                                peak_likes_hourly=200,
+                                peak_likes_hourly=57,
                                 peak_likes_daily=585,
-                                peak_comments_hourly=80,
+                                peak_comments_hourly=10,
                                 peak_comments_daily=182,
                                 peak_follows_hourly=48,
                                 peak_follows_daily=None,
@@ -105,12 +115,17 @@ with smart_run(session):
                           comment=5,
                           follow=4.17,
                           unfollow=28)
+    
+    """
+    Setting Campaign
+    """
+    session.set_blacklist(enabled=True, campaign='general_local')
 
 
     """
     Filters
     """
-    session.set_dont_like(['sad', 'rain', 'depression'])
+    session.set_dont_like(['sad', 'depression', 'covid'])
     session.set_delimit_liking(enabled=True, max_likes=100, min_likes=0)
     session.set_delimit_commenting(enabled=True, max_comments=None, min_comments=10)
     session.set_relationship_bounds(enabled=True,
@@ -118,8 +133,13 @@ with smart_run(session):
                                     delimit_by_numbers=True,
                                     max_followers=None,
                                     max_following=5000,
-                                    min_followers=50,
+                                    min_followers=100,
                                     min_following=50)
+    session.set_skip_users(
+                       no_profile_pic_percentage=50,
+                       dont_skip_business_categories=BUSINESS_CATEGORIES_TO_KEEP,
+                       mandatory_bio_keywords=[],
+                       )
 
     """
     Interaction settings
@@ -129,22 +149,25 @@ with smart_run(session):
     session.set_comments(COMMENT_LIST,
                          media='Photo')
     session.set_do_like(True, percentage=70)
-    session.set_user_interact(amount=5, randomize=True, percentage=80, media='Photo')
+    session.set_user_interact(amount=3, randomize=True, percentage=80, media='Photo')
 
     # activity
-    session.like_by_tags(ALL_TAGS, amount=80)
-    session.follow_by_tags(ALL_TAGS, amount=80)
-    session.follow_user_followers(BIG_ACCOUNTS, amount=800,
-                                  randomize=False, interact=False)
+    session.follow_user_followers(BIG_ACCOUNTS, amount=100,
+                                  randomize=False, interact=True)
     session.follow_user_following(BIG_ACCOUNTS, amount=10, randomize=False, sleep_delay=60)
-    session.follow_likers(BIG_ACCOUNTS, photos_grab_amount = 2, follow_likers_per_photo = 3, randomize=True, sleep_delay=600, interact=False)
-    session.follow_commenters(BIG_ACCOUNTS, amount=100, daysold=365, max_pic = 100, sleep_delay=600, interact=True)
+    session.follow_likers(BIG_ACCOUNTS, photos_grab_amount = 3, follow_likers_per_photo = 5, randomize=True, sleep_delay=600, interact=False)
+    session.follow_commenters(BIG_ACCOUNTS, amount=5, daysold=365, max_pic = 20, sleep_delay=600, interact=True)
 
     session.unfollow_users(amount=500, instapy_followed_enabled=True, instapy_followed_param="nonfollowers",
                            style="FIFO",
                            unfollow_after=2 * 24 * 60 * 60, sleep_delay=501)
 
-    session.unfollow_users(amount=100, nonFollowers=True, style="RANDOM", unfollow_after= 2 * 24 * 60 * 60, sleep_delay=655)
+    session.unfollow_users(amount=200, nonFollowers=True, style="RANDOM", unfollow_after= 2 * 24 * 60 * 60, sleep_delay=655)
+
+    session.like_by_tags(TOP_TAGS, amount=15)
+    session.follow_by_tags(TOP_TAGS, amount=15)
+
+
     session.end()
 
 
