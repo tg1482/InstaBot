@@ -13,9 +13,14 @@ docker-compose/geckodriver.log
 # virtualenv
 venv/
 ENV/
+docker-compose/.env
+
+# github
+.github
 
 # Editors
 .idea
 .vscode
 *.code-workspace
 .bak
+.devcontainer

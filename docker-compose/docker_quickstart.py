@@ -1,12 +1,15 @@
+import os
+import random
+
 from instapy import InstaPy
 from instapy.util import smart_run
-import random
 
 # Write your automation here
 # Stuck? Look at the github page https://github.com/InstaPy/instapy-quickstart
 
-insta_username = ""
-insta_password = ""
+insta_username = os.environ['USERNAME']
+insta_password = os.environ['PASSWORD']
+
 
 BIG_ACCOUNTS = ['fabcurate', 'picchika', 'shalvifashions', 'twinkle_collection_2020', 'azafashions', 'chandni_handloom']
 
@@ -64,6 +67,7 @@ GIFT_TAGS = ['giftsforher',
 ALL_TAGS = ENTREPRENEUR_TAGS + PRODUCT_TAGS + INDIAN_ETHNIC_TAGS + BLOCK_PRINTING_TAGS + GIFT_TAGS
 TOP_TAGS = random.sample(ALL_TAGS, 10)
 
+
 COMMENT_LIST = ['Beautiful :heart_eyes:',
                 'Absolutely stunning :heart_eyes: :heart:',
                 'Inspiring!']
@@ -79,8 +83,7 @@ session = InstaPy(username=insta_username,
                     password=insta_password,
                     headless_browser=True,
                     disable_image_load=True,
-                    multi_logs=False,
-                    # geckodriver_path="./assets/gecko/v0.29.1/geckodriver-v0.29.1-linux64/geckodriver",
+                    # geckodriver_path="assets/geckodriver.exe",
                     )
 
 
@@ -116,6 +119,7 @@ with smart_run(session):
                           follow=4.17,
                           unfollow=28)
     
+
     """
     Setting Campaign
     """
@@ -136,9 +140,10 @@ with smart_run(session):
                                     min_followers=100,
                                     min_following=50)
     session.set_skip_users(
-                       no_profile_pic_percentage=50,
-                       dont_skip_business_categories=BUSINESS_CATEGORIES_TO_KEEP,
-                       mandatory_bio_keywords=[],
+                        skip_private=False,
+                        no_profile_pic_percentage=50,
+                        dont_skip_business_categories=BUSINESS_CATEGORIES_TO_KEEP,
+                        mandatory_bio_keywords=[],
                        )
 
     """
@@ -149,14 +154,17 @@ with smart_run(session):
     session.set_comments(COMMENT_LIST,
                          media='Photo')
     session.set_do_like(True, percentage=70)
-    session.set_user_interact(amount=3, randomize=True, percentage=80, media='Photo')
+    session.set_user_interact(amount=2, randomize=True, percentage=50, media='Photo')
 
-    # activity
-    session.follow_user_followers(BIG_ACCOUNTS, amount=100,
+
+    """
+    Activity
+    """    
+    session.follow_user_followers(BIG_ACCOUNTS, amount=50,
                                   randomize=False, interact=True)
     session.follow_user_following(BIG_ACCOUNTS, amount=10, randomize=False, sleep_delay=60)
     session.follow_likers(BIG_ACCOUNTS, photos_grab_amount = 3, follow_likers_per_photo = 5, randomize=True, sleep_delay=600, interact=False)
-    session.follow_commenters(BIG_ACCOUNTS, amount=5, daysold=365, max_pic = 20, sleep_delay=600, interact=True)
+    session.follow_commenters(BIG_ACCOUNTS, amount=5, daysold=365, max_pic = 3, sleep_delay=600, interact=True)
 
     session.unfollow_users(amount=500, instapy_followed_enabled=True, instapy_followed_param="nonfollowers",
                            style="FIFO",
@@ -169,8 +177,3 @@ with smart_run(session):
 
 
     session.end()
-
-
-    # """ Joining Engagement Pods...
-    # """
-    # session.join_pods(topic='sports', engagement_mode='no_comments')
