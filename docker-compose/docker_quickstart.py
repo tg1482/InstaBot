@@ -154,26 +154,27 @@ with smart_run(session):
     session.set_comments(COMMENT_LIST,
                          media='Photo')
     session.set_do_like(True, percentage=70)
-    session.set_user_interact(amount=2, randomize=True, percentage=50, media='Photo')
+    session.set_user_interact(amount=2, randomize=True, percentage=75)
 
 
     """
     Activity
     """    
-    session.follow_user_followers(BIG_ACCOUNTS, amount=50,
-                                  randomize=False, interact=True)
-    session.follow_user_following(BIG_ACCOUNTS, amount=10, randomize=False, sleep_delay=60)
-    session.follow_likers(BIG_ACCOUNTS, photos_grab_amount = 3, follow_likers_per_photo = 5, randomize=True, sleep_delay=600, interact=False)
-    session.follow_commenters(BIG_ACCOUNTS, amount=5, daysold=365, max_pic = 3, sleep_delay=600, interact=True)
+    session.follow_user_followers(BIG_ACCOUNTS, amount=20,
+                                  randomize=True, interact=True)
 
-    session.unfollow_users(amount=500, instapy_followed_enabled=True, instapy_followed_param="nonfollowers",
+    # 1.6 Hours
+
+    session.unfollow_users(amount=100, instapy_followed_enabled=True, instapy_followed_param="nonfollowers",
                            style="FIFO",
                            unfollow_after=2 * 24 * 60 * 60, sleep_delay=501)
 
-    session.unfollow_users(amount=200, nonFollowers=True, style="RANDOM", unfollow_after= 2 * 24 * 60 * 60, sleep_delay=655)
+    session.unfollow_users(amount=100, nonFollowers=True, style="RANDOM", unfollow_after= 2 * 24 * 60 * 60, sleep_delay=655)
+
+    session.follow_likers(BIG_ACCOUNTS, photos_grab_amount = 3, follow_likers_per_photo = 5, randomize=True, sleep_delay=600, interact=True)
+    session.follow_commenters(BIG_ACCOUNTS, amount=5, daysold=365, max_pic = 3, sleep_delay=600, interact=True)
 
     session.like_by_tags(TOP_TAGS, amount=15)
     session.follow_by_tags(TOP_TAGS, amount=15)
-
 
     session.end()
